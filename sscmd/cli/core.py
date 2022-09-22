@@ -4,7 +4,7 @@ import json
 import typer
 from pathlib import Path
 from .options import ForceOverwriteOption
-from .utils import check_config
+from .utils import check_config_exists, create_default_config
 from . import assign, quest, directories
 from .. import *
 
@@ -64,6 +64,6 @@ def setup(ctx: typer.Context, path: Path,
     '''Configura una carpeta para un nuevo proyecto'''
     directories.setup_directory(path) 
     if config_bool:
-        create_default_config(ctx, path) 
+        create_default_config(ctx, path, force) 
 
 

@@ -19,7 +19,7 @@ def check_config_exists(config_path: Path):
         raise typer.Abort()
 
 
-def create_default_config(ctx: typer.Context, path: Path):
+def create_default_config(ctx: typer.Context, path: Path,force):
     configPath = Path(path,'project.conf')
     check_path_to_write(configPath,force)
     
@@ -32,5 +32,5 @@ def create_default_config(ctx: typer.Context, path: Path):
     config.set('general','url','https://...')
 
     configFile = open(configPath,'w')
-    config.write(configfile)
+    config.write(configFile)
 
