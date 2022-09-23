@@ -11,7 +11,8 @@ class Client():
     """
 
     def __init__(self, url: str,
-                 api_user: Optional[str] = None, api_password: Optional[str] = None,
+                 api_user: Optional[str] = None,
+                 api_password: Optional[str] = None,
                  token: Optional[str] = None,
                  workspace: str = "primary"):
         session = Session()

@@ -8,7 +8,9 @@ from .utils import check_config_exists, create_default_config
 from . import assign, quest, directories
 from .. import *
 
-app = typer.Typer()
+app = typer.Typer(context_settings={"allow_extra_args": True,
+                                    "ignore_unknown_options": True,
+                                    "help_option_names":['-h','--help']})
 
 def _version_callback(value: bool) -> None:
     if value:
@@ -23,6 +25,11 @@ def main(
             '--url',
             '-u',
             help='URL del servidor'),
+        workspace: Optional[str] = typer.Option(
+            None,
+            '--workspace',
+            '-w',
+            help='Especifica el workspace'),
         config_path: Optional[Path] = typer.Option(
             Path('project.conf'),
             '--config',
@@ -38,18 +45,19 @@ def main(
             is_eager=True)
         ) -> None:
     
-    
     ctx.config = configparser.ConfigParser()
     config = ctx.config 
 
     if ctx.invoked_subcommand not in ['setup']:
-        check_config_exists(config_path) # Checks the config file exists
-        config.read(config_path) # Read config file
-        # check_config has credentials 
+        try:
+            config.read(config_path) # Read config file
+            # check_config has credentials 
 
-        credentials = [ val for key, val in config.items('credentials')]
-        url = config['general']['url'] if not server_url else server_url
-        ctx.client = Client(url,*credentials)
+            credentials = [ val for key, val in config.items('credentials')]
+            url = config['general']['url'] if not server_url else server_url
+            ctx.client = Client(url,*credentials,workspace=workspace)
+        except:
+            pass
     return
 
 app.add_typer(quest.app, name='quest')

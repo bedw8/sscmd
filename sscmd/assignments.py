@@ -11,7 +11,6 @@ class AssignmentsApi(BaseApi):
         """Get list of assignments
         :param questionnaire_id: Filter by specific questionnaire id
         :param questionnaire_version: Filter by specific version number
-        :returns: list of :class:`Assignment<ssaw.models.Assignment>` objects
         """
         path = self.url
         limit = 20

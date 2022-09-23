@@ -1,8 +1,9 @@
+from typing import Optional
 import typer
 from pathlib import Path
 from configparser import ConfigParser
 
-def check_path_to_write(file, force):
+def check_path_to_write(file: Optional[Path], force: Optional[bool]):
     if file:
         if file.is_dir():
             print('la ruta ingresada corresponde a un directorio')

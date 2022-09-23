@@ -1,6 +1,7 @@
+from pathlib import Path
 import typer
 
-def OutputFileOption(content='la información',default=None):
+def OutputFileOption(content='la información',default=None) -> Path:
     help_ = 'Guarda '+content+' en el archivo indicado'  
     help_ = ' '.join(help_.split())
     return typer.Option(default,'--out','-o',help=help_)

@@ -1,8 +1,8 @@
 from typing import Optional, Union, Dict
 from urllib.parse import unquote
-from sscmd.client import Client
-from sscmd.exceptions import NotFoundError, UnauthorizedError, ForbiddenError, NotAcceptableError
-import re, os, os
+from .client import Client
+from .exceptions import NotFoundError, UnauthorizedError, ForbiddenError, NotAcceptableError
+import re, os
 
 class BaseApi():
     _apiprefix: str = '/'
@@ -13,7 +13,7 @@ class BaseApi():
 
     @property
     def url(self) -> str:
-        return (f"{self._client.baseurl}/{self.workspace}{self._apiprefix}" if self.workspace else f"{self._hq.baseurl}{self._apiprefix}")
+        return (f"{self._client.baseurl}/{self.workspace}{self._apiprefix}" if self.workspace else f"{self._client.baseurl}{self._apiprefix}")
 
     def _make_call(self, method: str, path: str, filepath: Optional[str] = None, 
             use_login_session: bool = False, **kwargs) -> Union[Dict[str, dict], str, None]:
