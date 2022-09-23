@@ -35,3 +35,10 @@ def create_default_config(ctx: typer.Context, path: Path,force):
     configFile = open(configPath,'w')
     config.write(configFile)
 
+
+def docs_from(original):
+	def wrapper(target):
+		target.__doc__ = original.__doc__.splitlines()[0]
+		return target
+	return wrapper
+

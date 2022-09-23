@@ -8,9 +8,9 @@ class AssignmentsApi(BaseApi):
 
     def get_list(self, questionnaire_id: Optional[str] = None,
                  questionnaire_version: Optional[int] = None):
-        """Get list of assignments
-        :param questionnaire_id: Filter by specific questionnaire id
-        :param questionnaire_version: Filter by specific version number
+        """Obtiene una lista de las asignaciones
+
+        Si no se entrega ID de cuestionario ni version, se obtendran las asignaciones de todos los cuestionarios disponibles en el workspace. Para identificar el ID y versión de un cuestionario usar `sscmd [-w workspace] quest list`  
         """
         path = self.url
         limit = 20
@@ -30,3 +30,18 @@ class AssignmentsApi(BaseApi):
             total_count = r['TotalCount']
             offset += limit
             yield from r['Assignments']
+
+    def get_id_details(self, assign_id:int):
+        """Entrega el detalle de una asignación"""
+        path = f'{self.url}/{assign_id}'
+        r = self._make_call('get',path)
+        return r
+
+
+    def set_responsible(self, assign_id: int, responsible: str):
+        """Cambia el responsable de una asignacion"""
+        path = f'{self.url}/{assign_id}/assign'
+        params = {'Responsible': responsible}
+
+        r = self._make_call('patch', path, json=params)
+        return r
