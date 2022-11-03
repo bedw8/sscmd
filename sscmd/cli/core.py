@@ -58,7 +58,6 @@ def main(
             #workspace = config['general']['workspace'] if not workspace else workspace 
 
             ctx.client = Client(url,*credentials,workspace=workspace)
-            print(ctx.client)
         except Exception as e:
             print(e)
     return
