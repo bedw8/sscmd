@@ -55,9 +55,12 @@ def main(
 
             credentials = [ val for key, val in config.items('credentials')]
             url = config['general']['url'] if not server_url else server_url
+            #workspace = config['general']['workspace'] if not workspace else workspace 
+
             ctx.client = Client(url,*credentials,workspace=workspace)
-        except:
-            pass
+            print(ctx.client)
+        except Exception as e:
+            print(e)
     return
 
 app.add_typer(quest.app, name='quest')

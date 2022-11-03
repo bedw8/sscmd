@@ -37,9 +37,15 @@ def get_list(ctx: typer.Context,
     
     api_params = {key: ctx.params[key] for key in ctx.params if key not in ['file','force']}
 
-    if in_range:
-        api_params['in_range'] = le(api_params['in_range'])
+    if id_range:
+        api_params['id_range'] = le(api_params['id_range'])
     
+    if not questionnaire_id:
+        api_params['questionnaire_id'] = ctx.parent.parent.config['general']['q_id']
+    
+    if not questionnaire_version:
+        api_params['questionnaire_version'] = ctx.parent.parent.config['general']['q_version']
+
     api = AssignmentsApi(ctx.parent.parent.client)
     assigns = list(api.get_list(**api_params))
     df = pd.DataFrame(assigns)
