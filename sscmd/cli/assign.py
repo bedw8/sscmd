@@ -34,6 +34,7 @@ def get_list(ctx: typer.Context,
         query: Optional[str] = typer.Option(None,'--query',help='Query de busqueda',show_default=False),
         folios: Optional[bool] = typer.Option(False,'--folios',help='Consultar folios las solicitudes (más lento)'),
         add_folios: Optional[Path] = typer.Option(None,'--folios-df',help='Añadar folios (merge) previamente obtenidos',show_default=False)
+        progress: Optional[bool] = typer.Option(False,'--progress',help='Mostrar barra de progreso',show_default=False)
         ):
     check_path_to_write(file,force) 
     
@@ -53,7 +54,7 @@ def get_list(ctx: typer.Context,
     assigns = []
     api = AssignmentsApi(ctx.parent.parent.client)
     list_generator = api.get_list(**api_params)
-    progress = track(list_generator,total=total) if id_range else list_generator  
+    progress = track(list_generator,total=total) if (id_range != None and progress) else list_generator  
     for a in progress:
         assigns.append(a)
     df = pd.DataFrame(assigns)
