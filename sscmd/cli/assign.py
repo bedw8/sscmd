@@ -33,12 +33,12 @@ def get_list(ctx: typer.Context,
         id_range: Optional[str] = typer.Option(None,'--range','-r',help="Especifica el rango de Ids",show_default=False), 
         query: Optional[str] = typer.Option(None,'--query',help='Query de busqueda',show_default=False),
         folios: Optional[bool] = typer.Option(False,'--folios',help='Consultar folios las solicitudes (más lento)'),
-        add_folios: Optional[Path] = typer.Option(None,'--folios-df',help='Añadar folios (merge) previamente obtenidos',show_default=False)
+        add_folios: Optional[Path] = typer.Option(None,'--folios-df',help='Añadar folios (merge) previamente obtenidos',show_default=False),
         progress: Optional[bool] = typer.Option(False,'--progress',help='Mostrar barra de progreso',show_default=False)
         ):
     check_path_to_write(file,force) 
     
-    api_params = {key: ctx.params[key] for key in ctx.params if key not in ['file','force','folios','add_folios']}
+    api_params = {key: ctx.params[key] for key in ctx.params if key not in ['file','force','folios','add_folios','progress']}
 
     if id_range:
         api_params['id_range'] = le(api_params['id_range'])
