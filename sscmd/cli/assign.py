@@ -38,7 +38,7 @@ def get_list(ctx: typer.Context,
         ):
     check_path_to_write(file,force) 
     
-    api_params = {key: ctx.params[key] for key in ctx.params if key not in ['file','force','folios','add_folios','progress']}
+    api_params = {key: ctx.params[key] for key in ctx.params if key not in ['file','force','add_folios','progress']}
 
     if id_range:
         api_params['id_range'] = le(api_params['id_range'])
