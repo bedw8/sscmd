@@ -44,6 +44,7 @@ class BaseApi():
         elif code == 404:
             raise NotFoundError(response.text)
         elif code in [400, 406]:
+            print(response)
             raise NotAcceptableError(response.text)
         else:
             response.raise_for_status()

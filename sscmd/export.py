@@ -1,6 +1,9 @@
-import time
-import pytz
+from pathlib import Path
 from typing import Optional, Union, Literal 
+import time
+import io
+from zipfile import ZipFile
+from datetime import datetime
 
 from .baseapi import BaseApi
 
@@ -17,7 +20,7 @@ class ExportApi(BaseApi):
     def get_list(self,
                  questionnaire_identity: Optional[str] = None,
                  export_type: Optional[EXPORT_TYPE] = None,
-        #         interview_status: Optional[INTERVIEW_STATUS] = None,
+                 interview_status: Optional[INTERVIEW_STATUS] = None,
                  export_status: Optional[EXPORT_STATUS] = None,
                  has_file: Optional[bool] = None):
         """
@@ -42,7 +45,7 @@ class ExportApi(BaseApi):
                 yield item
 
 
-    def start(self, export_type: EXPORT_TYPE, q_id:str, from_: Optional[str] = None, to: Optional[str] = None, wait: bool = True, show_progress: bool = True):
+    def start(self, export_type: EXPORT_TYPE, q_id:str, from_: Optional[str] = None, to: Optional[str] = None, wait: bool = True, download=True, outPath: Path = None, show_progress: bool = True):
         """Start new export job
         :param export_type
         :returns: request response
@@ -75,8 +78,7 @@ class ExportApi(BaseApi):
             while export['ExportStatus'] != "Completed":
                 time.sleep(1)
                 if show_progress:
-                    #print(".", end="", flush=True)
-                    print(str(progress)+"%", end=" ", flush=True)
+                    print(f"{progress}%", end="\r")
                 export = self.get_info(export['JobId'])
                 progress = export['Progress']
 
@@ -84,14 +86,20 @@ class ExportApi(BaseApi):
                 print('100%','Exportación compoletada de manera exitosa')
 
             if download == True:
-                download_path = self._make_call('get', export['Links']['Download'], filepath='/tmp/')
-                print('Descarga completada de manera exitosa')
-            else:
-                print('Falló la descarga')
+                if not outPath:
+                    p = datetime.now().strftime('%Y%m%dT%H%M')
+                    outPath = Path(p)
 
-            if export_type =="Paradata":
-                extract_path
-            
+                q_vers = q_id.split('$')[1]
+
+                if export_type =="Paradata":
+                    outPath = outPath / f'paradata_v{q_vers}'
+                if export_type =="STATA":
+                    outPath = outPath / f'SurveySolutions_v{q_vers}'
+
+                outPath.mkdir(parents=True,exist_ok=True)
+
+                self.download(export['JobId'], outPath)
 
         return export
 
@@ -99,7 +107,12 @@ class ExportApi(BaseApi):
     def get_info(self,job_id: int):
         return self._make_call(method="get", path=f"{self.url}/{job_id}")
 
-    def download(self,job_id: Optional[int], download_link: Optional[str]):
-        if job_id:
-            download_link = self.get_info(job_id)['Links']['Download']
+    def download(self,job_id: int, outPath: Path):
+        download_link = self.get_info(job_id)['Links']['Download']
+        response = self._client.session.get(download_link)
+        zfile = ZipFile(io.BytesIO(response.content))
+        zfile.extractall(outPath)
+        print('Descarga completada de manera exitosa')
+
+
     
