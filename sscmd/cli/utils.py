@@ -28,9 +28,11 @@ def create_default_config(ctx: typer.Context, path: Path,force):
 
     config.add_section('credentials')
     config.add_section('general')
-    config.set('credentials','user','usuario')
-    config.set('credentials','passwd','contraseña')
-    config.set('general','url','https://...')
+    config.set('credentials','api_user',"'usuario'")
+    config.set('credentials','api_password',"'contraseña'")
+    config.set('general','url',"'https://...'")
+    config.set('general','workspace',"'primary'")
+
 
     configFile = open(configPath,'w')
     config.write(configFile)

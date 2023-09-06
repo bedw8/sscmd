@@ -1,5 +1,7 @@
+from pathlib import Path
 from typing import Optional, Union, Tuple
 from .baseapi import BaseApi
+import pandas as pd
 
 
 class AssignmentsApi(BaseApi):
@@ -25,8 +27,14 @@ class AssignmentsApi(BaseApi):
             'limit': limit,
             'questionnaireId': None,
         }
+        if not questionnaire_id:
+            questionnaire_id = self._client.config['general']['q_id']
+    
+        if not questionnaire_version:
+            questionnaire_version = self._client.config['general']['q_version']
+        
         if questionnaire_id and questionnaire_version:
-            params['questionnaireId'] = '{}${}'.format(questionnaire_id, questionnaire_version)
+            params['questionnaireId'] = '{}${}'.format(questionnaire_id, questionnaire_version)        
 
         if query:
             params['searchBy'] = query
@@ -55,6 +63,39 @@ class AssignmentsApi(BaseApi):
                     if assign['Id'] > id_range[1]:
                         offset = total_count
 
+
+    def write_list(self,
+                 out: Path,
+                 add_folios: Optional[Path] = None,
+                 progress: Optional[bool] = None,
+                 **kwargs
+                ):
+        """Obtiene y escribe una lista de las asignaciones
+
+        out: Path,
+                 add_folios: Optional[Path] = None,
+                 progress: Optional[bool] = None,
+        """
+    
+        assigns = []
+        list_generator = self.get_list(**kwargs)
+        i=0
+        for a in list_generator:
+            if progress:
+                print(i,end='\r')
+                i+=1
+            assigns.append(a)
+            
+        df = pd.DataFrame(assigns)
+        df = df
+    
+        if add_folios:
+            folios_df = pd.read_csv(add_folios)
+            df = df.merge(folios_df,on='Id',how='left')
+            print('Se añadieron folios')
+    
+        df.to_csv(out,index=False)
+        print('Se escribío el archivo',out)
 
 
     def _get_folio(self,_id):
