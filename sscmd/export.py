@@ -18,7 +18,8 @@ class ExportApi(BaseApi):
     _apiprefix: str = "/api/v2/export"
 
     def get_list(self,
-                 questionnaire_identity: Optional[str] = None,
+                 q_id: Optional[str] = None,
+                 q_version: Optional[int] = None,
                  export_type: Optional[EXPORT_TYPE] = None,
                  interview_status: Optional[INTERVIEW_STATUS] = None,
                  export_status: Optional[EXPORT_STATUS] = None,
@@ -35,17 +36,35 @@ class ExportApi(BaseApi):
         params = {
             "exportType": export_type,
             "interviewStatus": interview_status,
-            "questionnaireIdentity": questionnaire_identity,
             "exportStatus": export_status,
             "hasFile": has_file,
         }
+
+        if not q_id:
+            q_id = self._client.config['general']['q_id']
+    
+        if not q_version:
+            q_version = self._client.config['general']['q_version']
+        
+        if q_id and q_version:
+            params['questionnaireIdentity'] = '{}${}'.format(q_id, q_version)
+        
         r = self._make_call('get', path, params=params)
         if r:
             for item in r:
                 yield item
 
 
-    def start(self, export_type: EXPORT_TYPE, q_id:str, from_: Optional[str] = None, to: Optional[str] = None, wait: bool = True, download=True, outPath: Path = None, show_progress: bool = True):
+    def start(self, 
+              export_type: EXPORT_TYPE, 
+              q_id: Optional[str] = None,
+              q_version: Optional[int] = None, 
+              from_: Optional[str] = None, 
+              to: Optional[str] = None, 
+              wait: bool = True, 
+              download=True, 
+              outPath: Path = None, 
+              show_progress: bool = True):
         """Start new export job
         :param export_type
         :returns: request response
@@ -54,7 +73,6 @@ class ExportApi(BaseApi):
         
         data={
               "ExportType": export_type,
-              "QuestionnaireId":q_id,
               "InterviewStatus": "All",
               "From": from_,
               "To": to,
@@ -65,6 +83,15 @@ class ExportApi(BaseApi):
               "IncludeMeta": True
             }
 
+        if not q_id:
+            q_id = self._client.config['general']['q_id']
+    
+        if not q_version:
+            q_version = self._client.config['general']['q_version']
+        
+        if q_id and q_version:
+            data['QuestionnaireId'] = '{}${}'.format(q_id, q_version)
+            
         export = self._make_call("post", path, json=data)
 
         if wait:
