@@ -117,14 +117,18 @@ class ExportApi(BaseApi):
                     p = datetime.now().strftime('%Y%m%dT%H%M')
                     outPath = Path(p)
 
-                q_vers = q_id.split('$')[1]
-
                 if export_type =="Paradata":
-                    outPath = outPath / f'paradata_v{q_vers}'
+                    outPath = outPath / f'paradata_v{q_version}'
                 if export_type =="STATA":
-                    outPath = outPath / f'SurveySolutions_v{q_vers}'
+                    outPath = outPath / f'SurveySolutions_v{q_version}'
 
-                outPath.mkdir(parents=True,exist_ok=True)
+                try:
+                    outPath.mkdir(parents=True,exist_ok=True)
+                except:
+                    now = datetime.now()
+                    nowStr = datetime.strftime(n,'%Y%m%d%H%M')
+                    outPath = Path('export_'+nowStr)
+                    outPath.mkdir(parents=True,exist_ok=True)
 
                 self.download(export['JobId'], outPath)
 
