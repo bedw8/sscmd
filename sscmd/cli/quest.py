@@ -7,9 +7,9 @@ from rich_tools import df_to_table
 import pandas as pd
 from .utils import check_path_to_write, check_config_exists
 from .options import OutputFileOption, ForceOverwriteOption
-from ..questionnaires import QuestionnairesApi
+from ..apis.questionnaires import QuestionnairesApi
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 @app.callback()
 def main(ctx: typer.Context):

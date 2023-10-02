@@ -7,12 +7,12 @@ from rich_tools import df_to_table
 import pandas as pd
 from .utils import check_path_to_write, check_config_exists, docs_from
 from .options import OutputFileOption, OutputFileArg, ForceOverwriteOption, ReqArg
-from ..assignments import AssignmentsApi
+from ..apis.assignments import AssignmentsApi
 from copy import deepcopy
 from ast import literal_eval as le
 from rich.progress import track
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 @app.callback()
 def main(ctx: typer.Context):

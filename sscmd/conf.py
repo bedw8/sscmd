@@ -5,8 +5,11 @@ import tomllib
 
 class Config:
     @classmethod
-    def load(cls, path: Union[str,Path]) -> None:
-        return tomllib.load(Path(path).open('rb'))
+    def load(cls, path: Union[str,Path]):
+        try:
+            return tomllib.load(Path(path).open('rb'))
+        except FileNotFoundError:
+            return 
 
 
 

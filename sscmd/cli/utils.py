@@ -1,7 +1,7 @@
 from typing import Optional
 import typer
 from pathlib import Path
-from configparser import ConfigParser
+import toml
 
 def check_path_to_write(file: Optional[Path], force: Optional[bool]):
     if file:
@@ -24,18 +24,14 @@ def create_default_config(ctx: typer.Context, path: Path,force):
     configPath = Path(path,'project.conf')
     check_path_to_write(configPath,force)
     
-    config = ctx.parent.config
+    config = {}
 
-    config.add_section('credentials')
-    config.add_section('general')
-    config.set('credentials','api_user',"'usuario'")
-    config.set('credentials','api_password',"'contraseña'")
-    config.set('general','url',"'https://...'")
-    config.set('general','workspace',"'primary'")
-
+    config['credentials'] = {'api_user':'usuario','api_password':'contraseña'}
+    config['general']  = {'url':'https://...','workspace':'primary'}
 
     configFile = open(configPath,'w')
-    config.write(configFile)
+    #config.write(configFile)
+    toml.dump(config,configFile)
 
 
 def docs_from(original):

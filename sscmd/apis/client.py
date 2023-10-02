@@ -1,7 +1,7 @@
 from requests import Session
 from pathlib import Path
 from typing import Optional, Union
-from .conf import Config
+from sscmd.conf import Config
 
 class Client():
     """Initializes the API client
@@ -26,7 +26,8 @@ class Client():
         
         args = locals()
 
-        self.config = Config.load(configFile) if configFile else {}
+        self.config = Config.load(configFile) 
+        self.config = self.config if configFile else {}
 
         for section in ['credentials','general']:
             if section not in self.config:
@@ -46,20 +47,19 @@ class Client():
             elif a not in self.config['general']:
                 self.config['general'][a] = None
             
-        session = Session()
+        self.session = Session()
 
         token = self.config['credentials']['token']
-        api_user = self.config['credentials']['api_user']
+        api_user = self.config['credentials']['i_user']
         api_password = self.config['credentials']['api_password']
         
         if token:
-            session.headers.update({"Authorization": f"Bearer {token}"})
+            self.session.headers.update({"Authorization": f"Bearer {token}"})
         elif api_user and api_password:
-            session.auth = (api_user, api_password)
+            self.session.auth = (api_user, api_password)
 
-        session.headers.update({"User-Agent": 'python'})
+        self.session.headers.update({"User-Agent": 'python'})
         self.baseurl = self.config['general']['url'].rstrip("/")
-        self.session = session
         self.workspace = self.config['general']['workspace']
 
 

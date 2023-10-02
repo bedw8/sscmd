@@ -1,13 +1,11 @@
-from .client import Client
-from .questionnaires import QuestionnairesApi
-from .export import ExportApi
-from .assignments import AssignmentsApi
-from .conf import Config
+from sscmd.apis.client import Client
+from sscmd.apis.questionnaires import QuestionnairesApi
+from sscmd.apis.export import ExportApi
+from sscmd.apis.assignments import AssignmentsApi
+from ssmcd.conf import Config
 
 __appname__ = "sscmd"
 __version__ = "0.1"
 
 
-del client, conf, questionnaires, export, assignments, baseapi, exceptions
-
-__all__ = ["__version__", "ExportApi", "Config", "Client", "QuestionnairesApi","AssignmentsApi" ]
+del apis, conf
