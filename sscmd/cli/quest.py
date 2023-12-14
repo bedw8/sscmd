@@ -28,8 +28,11 @@ def get_list(ctx: typer.Context,
 
     qapi = QuestionnairesApi(ctx.parent.parent.client)
     quests = list(qapi.get_list())
-    print(ctx)
-    q_df = pd.DataFrame(quests).drop(['LastEntryDate','IsAudioRecordingEnabled','WebModeEnabled'],axis=1)
+    q_df = pd.DataFrame(quests)
+    if q_df.shape[0] == 0:
+        return 
+
+    q_df = q_df.drop(['LastEntryDate','IsAudioRecordingEnabled','WebModeEnabled'],axis=1)
     q_df = q_df.sort_values(['Title','Version'])
 
 

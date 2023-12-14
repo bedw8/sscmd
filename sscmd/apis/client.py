@@ -50,7 +50,7 @@ class Client():
         self.session = Session()
 
         token = self.config['credentials']['token']
-        api_user = self.config['credentials']['i_user']
+        api_user = self.config['credentials']['api_user']
         api_password = self.config['credentials']['api_password']
         
         if token:
