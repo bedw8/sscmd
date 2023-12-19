@@ -20,14 +20,14 @@ class Client():
                  api_user: Optional[str] = None,
                  api_password: Optional[str] = None,
                  token: Optional[str] = None,
-                 workspace: str = "primary"
+                 workspace: Optional[str] = None
                 ):
 
         
         args = locals()
 
-        self.config = Config.load(configFile) 
-        self.config = self.config if configFile else {}
+        #self.config = Config.load(configFile) 
+        self.config = Config.load(configFile) if configFile else {}
 
         for section in ['credentials','general']:
             if section not in self.config:
@@ -61,5 +61,4 @@ class Client():
         self.session.headers.update({"User-Agent": 'python'})
         self.baseurl = self.config['general']['url'].rstrip("/")
         self.workspace = self.config['general']['workspace']
-
 

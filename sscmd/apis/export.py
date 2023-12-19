@@ -93,6 +93,9 @@ class ExportApi(BaseApi):
             data['QuestionnaireId'] = '{}${}'.format(q_id, q_version)
             
         export = self._make_call("post", path, json=data)
+        if isinstance(export,list):
+            export = export[0]
+            print(export)
 
         if wait:
             export = self.get_info(export['JobId'])
@@ -136,7 +139,10 @@ class ExportApi(BaseApi):
 
 
     def get_info(self,job_id: int):
-        return self._make_call(method="get", path=f"{self.url}/{job_id}")
+        r = self._make_call(method="get", path=f"{self.url}/{job_id}")
+        if isinstance(r,list):
+            r = r[0]
+        return r
 
     def download(self,job_id: int, outPath: Path):
         download_link = self.get_info(job_id)['Links']['Download']
