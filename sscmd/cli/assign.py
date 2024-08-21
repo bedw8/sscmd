@@ -49,14 +49,25 @@ def get_list(ctx: typer.Context,
     if not questionnaire_version:
         api_params['questionnaire_version'] = ctx.parent.parent.config['general']['q_version']
 
-    total = (api_params['id_range'][1] - api_params['id_range'][0])
+    if id_range:
+        total = (api_params['id_range'][1] - api_params['id_range'][0])
+    else:
+        total = None
+
 
     assigns = []
     api = AssignmentsApi(ctx.parent.parent.client)
     list_generator = api.get_list(**api_params)
-    progress = track(list_generator,total=total) if (id_range != None and progress) else list_generator  
-    for a in progress:
+    iterator = track(list_generator,total=total) if (id_range is not None and progress) else list_generator  
+    count = 0
+    for a in iterator:
+        if progress and not id_range:
+            if count % 10 == 0:
+                print(count,end='\r')
         assigns.append(a)
+
+        count += 1
+
     df = pd.DataFrame(assigns)
     df = df
 

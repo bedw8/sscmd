@@ -68,6 +68,7 @@ class AssignmentsApi(BaseApi):
                  out: Path,
                  add_folios: Optional[Path] = None,
                  progress: Optional[bool] = None,
+                 how_merge: str = 'right',
                  **kwargs
                 ):
         """Obtiene y escribe una lista de las asignaciones
@@ -90,8 +91,9 @@ class AssignmentsApi(BaseApi):
         df = df
     
         if add_folios:
-            folios_df = pd.read_csv(add_folios)
-            df = df.merge(folios_df,on='Id',how='left')
+            folios_df = pd.read_csv(add_folios)[['Id','Folios']]
+            df = df.merge(folios_df,on='Id',how=how_merge)
+            #df.sort_values(by='Id')
             print('Se añadieron folios')
     
         df.to_csv(out,index=False)
@@ -100,14 +102,19 @@ class AssignmentsApi(BaseApi):
 
     def _get_folio(self,_id):
         details = self.get_id_details(_id)
-        return details['Answers'][0]['Answer']['Value']
+        try:
+            return details['Answers'][0]['Answer']['Value']
+        except:
+            try:
+                return pd.DataFrame(details['IdentifyingData']).set_index('Variable')['Answer'].folio
+            except:
+                return pd.DataFrame(d['Answers']).set_index('Variable').loc['folio','Answer']['Value']
 
     def get_id_details(self, assign_id:int):
         """Entrega el detalle de una asignación"""
         path = f'{self.url}/{assign_id}'
         r = self._make_call('get',path)
         return r
-
 
     def set_responsible(self, assign_id: int, responsible: str):
         """Cambia el responsable de una asignacion"""
